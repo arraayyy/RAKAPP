@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/screens/Dashboard.dart';
 import 'package:myapp/screens/SignUp.dart';
+import 'package:myapp/services/AuthService.dart';
 import 'package:myapp/widget/PasswordField.dart';
 import '../widget/CustomTextField.dart';
 import '../widget/PrimaryButton.dart';
@@ -14,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  AuthService _authService = AuthService();
   final TextEditingController emailController = TextEditingController();
   bool obscurePassword = true;
   final TextEditingController passwordController = TextEditingController();
@@ -73,8 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: "Login",
                       iconData: Icons.login,
                       onPress: () {
-                        Navigator.pushReplacementNamed(
-                            context, Dashboard.routeName);
+                        loginWithProvider();
                       },
                     ),
                     const SizedBox(
@@ -125,5 +126,14 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       obscurePassword = !obscurePassword;
     });
+  }
+
+  loginWithProvider() async {
+    try {
+      var user = await _authService.signInWithGoogle();
+      // it will navigate to dashboard screen
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, Dashboard.routeName);
+    } catch (e) {}
   }
 }

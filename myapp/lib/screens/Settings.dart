@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/screens/LoginScreen.dart';
+import 'package:myapp/services/AuthService.dart';
 
 class Settings extends StatefulWidget {
   static String routeName = "/settings";
@@ -9,6 +10,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +18,9 @@ class _SettingsState extends State<Settings> {
           backgroundColor: Color(0xff0095FF),
           actions: [
             GestureDetector(
-              onTap: () {
+              onTap: () async {
+                await authService.logout();
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     LoginScreen.routeName, (Route<dynamic> route) => false);
               },
