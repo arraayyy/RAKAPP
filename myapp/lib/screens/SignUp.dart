@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/screens/LoginScreen.dart';
 
@@ -18,7 +20,8 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController Lnamecontroller = TextEditingController();
   final TextEditingController Addresscontroller = TextEditingController();
   bool obscurePassword = true;
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController CpasswordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -80,12 +83,21 @@ class _SignUpState extends State<SignUp> {
                     const SizedBox(
                       height: 10.0,
                     ),
+                    CustomTextField(
+                      labelText: "Email",
+                      hintText: "Enter email",
+                      controller: _emailController,
+                      textInputType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
                     PasswordField(
                       obscureText: obscurePassword,
                       onTap: handleObscurePassword,
                       labelText: "Password",
                       hintText: "Enter password",
-                      controller: passwordController,
+                      controller: _passwordController,
                     ),
                     const SizedBox(
                       height: 10.0,
@@ -115,10 +127,20 @@ class _SignUpState extends State<SignUp> {
                       child: Center(
                         child: GestureDetector(
                           onTap: () {
+                            FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                    email: _emailController.text,
+                                    password: _passwordController.text)
+                                .then((value) {
+                              print("Created new account");
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  LoginScreen.routeName,
+                                  (Route<dynamic> route) => false);
+                            }).onError((error, stackTrace) {
+                              print("Error ${error.toString()}");
+                            });
                             // must not contain a back button
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                LoginScreen.routeName,
-                                (Route<dynamic> route) => false);
+                            // Navigator.pushNamed(context, Dashboard.routeName);
                           },
                           child: const Text(
                             "Already have an account? Login",

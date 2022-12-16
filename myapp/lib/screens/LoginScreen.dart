@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/screens/Dashboard.dart';
 import 'package:myapp/screens/SignUp.dart';
@@ -14,9 +15,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool obscurePassword = true;
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     CustomTextField(
                       labelText: "Email",
                       hintText: "Enter email address",
-                      controller: emailController,
+                      controller: _emailController,
                       textInputType: TextInputType.emailAddress,
                     ),
                     const SizedBox(
@@ -64,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: handleObscurePassword,
                       labelText: "Password",
                       hintText: "Enter password",
-                      controller: passwordController,
+                      controller: _passwordController,
                     ),
                     const SizedBox(
                       height: 20.0,
@@ -73,8 +74,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: "Login",
                       iconData: Icons.login,
                       onPress: () {
-                        Navigator.pushReplacementNamed(
-                            context, Dashboard.routeName);
+                        FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                                email: _emailController.text,
+                                password: _passwordController.text)
+                            .then((value) {
+                          Navigator.pushReplacementNamed(
+                              context, Dashboard.routeName);
+                        }).onError((error, stackTrace) {
+                          print("Error ${error.toString()}");
+                        });
                       },
                     ),
                     const SizedBox(

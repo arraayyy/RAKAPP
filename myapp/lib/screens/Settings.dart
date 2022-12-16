@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/screens/LoginScreen.dart';
 
@@ -17,8 +18,11 @@ class _SettingsState extends State<Settings> {
           actions: [
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    LoginScreen.routeName, (Route<dynamic> route) => false);
+                FirebaseAuth.instance.signOut().then((value) {
+                  print("Signed Out");
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      LoginScreen.routeName, (Route<dynamic> route) => false);
+                });
               },
               child: const Padding(
                 padding: EdgeInsets.only(right: 15.0),
